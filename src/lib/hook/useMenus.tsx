@@ -3,13 +3,16 @@ import useSWRImmutable from "swr/immutable";
 
 import { Menu } from "@/pages/store/[id]/menu/type/type";
 
-import { getMenusByStoreId } from "../supabase/database";
-
 const fetcher = async (url: string): Promise<Menu[]> => {
-  const storeId = url.split("/")[1];
-  const menus = await getMenusByStoreId(storeId);
+  const res = await fetch(url);
 
-  return menus;
+  if (!res.ok) {
+    throw Error;
+  }
+
+  const json = (await res.json()) as { menus: Menu[] };
+
+  return json.menus;
 };
 
 export const useMeuns = () => {
@@ -20,7 +23,7 @@ export const useMeuns = () => {
     data,
     isLoading,
     error: isError,
-  } = useSWRImmutable<Menu[], Error>(id ? `/${id}/menus` : null, fetcher);
+  } = useSWRImmutable<Menu[], Error>(id ? `/api/${id}/menus` : null, fetcher);
 
   return { menus: data, isLoading, isError };
 };

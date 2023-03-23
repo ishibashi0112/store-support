@@ -69,9 +69,14 @@ export const createSeats = async (seatsData: any) => {
 };
 
 export const createMenus = async (menusData: any) => {
-  const { error } = await supabase.from("menus").insert(menusData);
+  const { data, error } = await supabase
+    .from("menus")
+    .insert(menusData)
+    .select();
 
   if (error) {
     throw error;
   }
+
+  return data[0] as Menu[];
 };

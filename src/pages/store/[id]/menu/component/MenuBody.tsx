@@ -1,4 +1,4 @@
-import { Alert, Group, Loader, Space, Tabs } from "@mantine/core";
+import { Alert, Space, Tabs } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import React, { FC } from "react";
 
@@ -33,13 +33,13 @@ const tabsListData = [
 export const MenuBody: FC = () => {
   const { menus, isLoading } = useMeuns();
 
-  if (isLoading) {
-    return (
-      <Group position="center">
-        <Loader />
-      </Group>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Group position="center">
+  //       <Loader />
+  //     </Group>
+  //   );
+  // }
 
   if (!menus) {
     return <Alert>データの取得に失敗しました。</Alert>;
