@@ -1,8 +1,7 @@
-import { randomId } from "@mantine/hooks";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { addMenuFormschema } from "@/lib/zod/schema";
+import { createMenuRequestBodySchema } from "@/lib/zod/schema";
 import { Menu } from "@/pages/store/[id]/menu/type/type";
 
 type Data =
@@ -34,23 +33,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     res.status(200).json({ menus });
   } else if (method === "POST") {
-    const parsedBody = addMenuFormschema.parse(body);
-
-    let imagePath = null;
-    if (parsedBody.image) {
-      const { data: fileData, error: imageUploadError } = await supabase.storage
-        .from("menu-image")
-        .upload(`${randomId()}.png`, parsedBody.image);
-
-      if (imageUploadError) {
-        throw imageUploadError;
-      }
-
-      imagePath = fileData.path;
-    }
-
-    const { image, ...purgedFormData } = parsedBody;
-    const newBodyData = { ...purgedFormData, imagePath, storeId };
+    const parsedBody = createMenuRequestBodySchema.parse(body);
+    const newBodyData = { ...parsedBody, storeId };
 
     const { data, error } = await supabase
       .from("menus")
@@ -60,6 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     if (error) {
       throw error;
     }
+
     const menu = data[0] as Menu;
 
     res.status(200).json({ menu });

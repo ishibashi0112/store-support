@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconCurrencyYen, IconPhoto } from "@tabler/icons-react";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useMemo } from "react";
 
 import { useCategories } from "@/lib/hook/useCategories";
 import { useMemuMutation } from "@/lib/hook/useMemuMutation";
@@ -20,11 +20,8 @@ import { calculatePriceWithTax } from "@/lib/utils/function";
 import { addMenuFormschema, AddMenuFormValues } from "@/lib/zod/schema";
 
 export const AddMenuForm: FC = () => {
-  // const { query } = useRouter();
-  const [isLoading, setIsloading] = useState(false);
   const { categories } = useCategories();
   const { trigger, isMutating } = useMemuMutation();
-  // const { mutate } = useSWRConfig();
 
   const selectData = categories
     ? categories.map((category) => ({
@@ -59,28 +56,16 @@ export const AddMenuForm: FC = () => {
     );
   }, [form.values.image]);
 
-  const handleSubmit = async (values: typeof form.values) => {
-    // if (!query.id) return;
-    try {
-      // setIsloading(true);
-      // const storeId = query.id as string;
-
-      // const filePath = values.image ? await imageUpload(values.image) : null;
-      // const { image, ...newValue } = values;
-
-      // const menusData = { ...newValue, imagePath: filePath };
-      // await createMenus(menusData);
-      trigger(values);
-      // await mutate(`/api/${storeId}/menus`);
-
-      form.reset();
-      // close();
-    } catch (error) {
-      console.error(error);
-    }
-    // finally {
-    //   setIsloading(false);
-    // }
+  const handleSubmit = async (values: typeof form.values): Promise<void> => {
+    trigger(values, {
+      onSuccess: () => {
+        close();
+        form.reset();
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    });
   };
 
   return (

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const imageUploadSchema = z.custom<FormData>();
+
 export const addMenuFormschema = z.object({
   name: z
     .string()
@@ -13,5 +15,9 @@ export const addMenuFormschema = z.object({
   image: z.custom<File>().nullable(),
   menuCategoryId: z.string().min(1, "必ず入力してください。"),
 });
+
+export const createMenuRequestBodySchema = addMenuFormschema
+  .omit({ image: true })
+  .merge(z.object({ imagePath: z.string() }));
 
 export type AddMenuFormValues = z.infer<typeof addMenuFormschema>;

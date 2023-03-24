@@ -1,17 +1,23 @@
 import { useRouter } from "next/router";
 import useSWRMutation from "swr/mutation";
 
+import { imageUpload } from "../supabase/storage";
 import { AddMenuFormValues } from "../zod/schema";
 
 type Arg = { arg: AddMenuFormValues };
 
 const createMenu = async (url: string, { arg }: Arg) => {
+  const imagePath = arg.image ? await imageUpload(arg.image) : null;
+
+  const { image, ...trimedBody } = arg;
+  const newRequestBody = { ...trimedBody, imagePath };
+
   const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(arg),
+    body: JSON.stringify(newRequestBody),
   });
 
   if (!res.ok) {
