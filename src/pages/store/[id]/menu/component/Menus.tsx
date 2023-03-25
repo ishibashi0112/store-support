@@ -1,45 +1,34 @@
-import { Alert, Divider, SimpleGrid, Space, Text } from "@mantine/core";
+import { Alert, SimpleGrid } from "@mantine/core";
 import React, { FC } from "react";
+import { useSnapshot } from "valtio";
 
-import { useCategories } from "@/lib/hook/useCategories";
 import { useMeuns } from "@/lib/hook/useMenus";
+import { state } from "@/lib/store/state";
 
-import { MenuCard } from "./MenuCard";
+import { Menu } from "./Menu";
 
-export const Menus: FC = () => {
+type Props = {
+  categoryId: string;
+};
+
+export const Menus: FC<Props> = (props) => {
   const { menus } = useMeuns();
-  const { categories } = useCategories();
+  const { menuDisplay } = useSnapshot(state);
 
-  const filterMenu = (categoryId: string) => {
-    if (!menus) return [];
+  const gridCols = menuDisplay === "list" ? 2 : 4;
+  const filteredMenus = menus
+    ? menus.filter((menu) => menu.menuCategoryId === props.categoryId)
+    : [];
 
-    return menus.filter((menu) => menu.menuCategoryId === categoryId);
-  };
-
-  if (!menus || !categories) {
-    return <></>;
+  if (!filteredMenus.length) {
+    return <Alert>このカテゴリーのメニューはありません。</Alert>;
   }
 
   return (
-    <>
-      {categories.map((category) => (
-        <div key={category.id}>
-          <Text>{category.name}</Text>
-          <Divider variant="dashed" mb="sm" />
-
-          {filterMenu(category.id).length ? (
-            <SimpleGrid cols={4}>
-              {filterMenu(category.id).map((menu) => (
-                <MenuCard key={menu.id} menu={menu} />
-              ))}
-            </SimpleGrid>
-          ) : (
-            <Alert>このカテゴリーのメニューはありません。</Alert>
-          )}
-
-          <Space h="1rem" />
-        </div>
+    <SimpleGrid cols={gridCols}>
+      {filteredMenus.map((menu) => (
+        <Menu key={menu.id} menu={menu} display={menuDisplay} />
       ))}
-    </>
+    </SimpleGrid>
   );
 };

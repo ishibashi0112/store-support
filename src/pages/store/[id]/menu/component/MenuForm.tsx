@@ -15,13 +15,30 @@ import { IconCurrencyYen, IconPhoto } from "@tabler/icons-react";
 import React, { FC, memo } from "react";
 
 import { useCategories } from "@/lib/hook/useCategories";
-import { useCreateMemuMutation } from "@/lib/hook/useCreateMemuMutation";
+import { useMemuMutation } from "@/lib/hook/useMemuMutation";
 import { calculatePriceWithTax } from "@/lib/utils/function";
-import { addMenuFormschema, AddMenuFormValues } from "@/lib/zod/schema";
+import { addMenuFormSchema, AddMenuFormValues } from "@/lib/zod/schema";
 
-export const AddMenuForm: FC = () => {
+import { Menu } from "../type/type";
+
+type Props = {
+  menu?: Menu;
+};
+
+export const MenuForm: FC<Props> = (props) => {
   const { categories } = useCategories();
-  const { trigger, isMutating } = useCreateMemuMutation();
+  const { trigger, isMutating } = useMemuMutation(props.menu ? "PUT" : "POST");
+
+  const form = useForm<AddMenuFormValues>({
+    initialValues: {
+      name: props.menu ? props.menu.name : "",
+      price: props.menu ? props.menu.price : 0,
+      description: props.menu ? props.menu.description : "",
+      image: null,
+      menuCategoryId: props.menu ? props.menu.menuCategoryId : "",
+    },
+    validate: zodResolver(addMenuFormSchema),
+  });
 
   const selectData = categories
     ? categories.map((category) => ({
@@ -30,19 +47,13 @@ export const AddMenuForm: FC = () => {
       }))
     : [];
 
-  const form = useForm<AddMenuFormValues>({
-    initialValues: {
-      name: "",
-      price: 0,
-      description: "",
-      image: null,
-      menuCategoryId: "",
-    },
-    validate: zodResolver(addMenuFormschema),
-  });
-
   const handleSubmit = (values: typeof form.values): void => {
-    trigger(values, {
+    const data = {
+      values,
+      id: props.menu ? props.menu.id : "",
+      currentImagePath: props.menu?.imagePath ? props.menu.imagePath : "",
+    };
+    trigger(data, {
       onSuccess: () => {
         form.reset();
       },
@@ -99,15 +110,22 @@ export const AddMenuForm: FC = () => {
           {...form.getInputProps("menuCategoryId")}
         />
 
-        <FileInput
-          label="イメージ"
-          placeholder="イメージ画像を選択してください"
-          size="xs"
-          clearable
-          accept="image/*"
-          icon={<IconPhoto size={18} />}
-          {...form.getInputProps("image")}
-        />
+        <div>
+          <FileInput
+            label="イメージ"
+            placeholder={
+              props.menu?.imagePath
+                ? "変更が必要な場合は選択してください"
+                : "イメージ画像を選択してください"
+            }
+            size="xs"
+            clearable
+            accept="image/*"
+            icon={<IconPhoto size={18} />}
+            {...form.getInputProps("image")}
+          />
+          {props.menu?.imagePath && <Text>{props.menu.imagePath}</Text>}
+        </div>
 
         <Preview image={form.values.image} />
 

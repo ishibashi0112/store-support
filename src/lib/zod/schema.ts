@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const imageUploadSchema = z.custom<FormData>();
 
-export const addMenuFormschema = z.object({
+export const addMenuFormSchema = z.object({
   name: z
     .string()
     .min(1, "必ず入力してください。")
@@ -16,8 +16,12 @@ export const addMenuFormschema = z.object({
   menuCategoryId: z.string().min(1, "必ず入力してください。"),
 });
 
-export const createMenuRequestBodySchema = addMenuFormschema
+export const postMenuRequestBodySchema = addMenuFormSchema
   .omit({ image: true })
-  .merge(z.object({ imagePath: z.string() }));
+  .merge(z.object({ imagePath: z.string().nullable() }));
 
-export type AddMenuFormValues = z.infer<typeof addMenuFormschema>;
+export const putMenuRequestBodySchema = addMenuFormSchema
+  .omit({ image: true })
+  .merge(z.object({ imagePath: z.string().nullable(), id: z.string() }));
+
+export type AddMenuFormValues = z.infer<typeof addMenuFormSchema>;

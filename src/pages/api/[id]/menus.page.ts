@@ -1,7 +1,10 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { createMenuRequestBodySchema } from "@/lib/zod/schema";
+import {
+  postMenuRequestBodySchema,
+  putMenuRequestBodySchema,
+} from "@/lib/zod/schema";
 import { Menu } from "@/pages/store/[id]/menu/type/type";
 
 type Data =
@@ -33,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     res.status(200).json({ menus });
   } else if (method === "POST") {
-    const parsedBody = createMenuRequestBodySchema.parse(body);
+    const parsedBody = postMenuRequestBodySchema.parse(body);
     const newBodyData = { ...parsedBody, storeId };
 
     const { data, error } = await supabase
@@ -46,6 +49,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     }
 
     const menu = data[0] as Menu;
+
+    res.status(200).json({ menu });
+  } else if (method === "PUT") {
+    const parsedBody = putMenuRequestBodySchema.parse(body);
+    const { id, ...newBodyData } = parsedBody;
+
+    const { data, error } = await supabase
+      .from("menus")
+      .update(newBodyData)
+      .eq("id", id)
+      .select();
+
+    console.log(1);
+
+    if (error) {
+      throw error;
+    }
+
+    const menu = data[0] as Menu;
+
+    console.log(2);
 
     res.status(200).json({ menu });
   } else {

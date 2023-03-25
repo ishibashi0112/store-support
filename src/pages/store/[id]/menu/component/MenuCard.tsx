@@ -16,6 +16,7 @@ import { getImageUrl } from "@/lib/supabase/storage";
 import { calculatePriceWithTax } from "@/lib/utils/function";
 
 import { Menu } from "../type/type";
+import { MenuSelectRadio } from "./MenuSelectRadio";
 
 type Props = {
   menu: Menu;
@@ -70,6 +71,11 @@ export const MenuCard: FC<Props> = (props) => {
           </Group>
         </div>
       </Stack>
+
+      <MenuSelectRadio
+        className="absolute top-2 left-2"
+        menuId={props.menu.id}
+      />
 
       <MantineMenu>
         <MantineMenu.Target>

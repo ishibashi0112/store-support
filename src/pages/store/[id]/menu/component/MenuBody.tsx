@@ -1,11 +1,12 @@
-import { Alert, Space, Tabs } from "@mantine/core";
+import { Alert, Container, Group, Space, Tabs } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import React, { FC } from "react";
 
 import { useMeuns } from "@/lib/hook/useMenus";
 
+import { CategoriesWithMenus } from "./CategoriesWithMenus";
+import { DisplaySelector } from "./DisplaySelector";
 import { MenuHeader } from "./MenuHeader";
-import { Menus } from "./Menus";
 
 const tabsListData = [
   {
@@ -46,7 +47,7 @@ export const MenuBody: FC = () => {
   }
 
   return (
-    <div>
+    <Container>
       <MenuHeader />
 
       <Space h="1rem" />
@@ -57,16 +58,19 @@ export const MenuBody: FC = () => {
         </Alert>
       ) : (
         <Tabs variant="pills" defaultValue="all">
-          <Tabs.List>
-            {tabsListData.map((data) => (
-              <Tabs.Tab key={data.text} value={data.value}>
-                {data.text}
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
+          <Group position="apart">
+            <Tabs.List>
+              {tabsListData.map((data) => (
+                <Tabs.Tab key={data.text} value={data.value}>
+                  {data.text}
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+            <DisplaySelector />
+          </Group>
 
           <Tabs.Panel value="all" pt="xs">
-            <Menus />
+            <CategoriesWithMenus />
           </Tabs.Panel>
 
           <Tabs.Panel value="recommend" pt="xs">
@@ -78,6 +82,6 @@ export const MenuBody: FC = () => {
           </Tabs.Panel>
         </Tabs>
       )}
-    </div>
+    </Container>
   );
 };

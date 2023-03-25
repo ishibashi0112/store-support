@@ -2,7 +2,7 @@ import { Button, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React, { FC } from "react";
 
-import { AddMenuForm } from "./AddMenuForm";
+import { MenuForm } from "./MenuForm";
 
 export const AddMenuModalFormButton: FC = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -19,7 +19,7 @@ export const AddMenuModalFormButton: FC = () => {
         onClose={close}
         title="メニュー登録"
       >
-        <AddMenuForm />
+        <MenuForm />
       </Modal>
     </div>
   );
