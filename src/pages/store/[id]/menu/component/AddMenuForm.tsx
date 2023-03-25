@@ -12,16 +12,16 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconCurrencyYen, IconPhoto } from "@tabler/icons-react";
-import React, { FC, useMemo } from "react";
+import React, { FC, memo } from "react";
 
 import { useCategories } from "@/lib/hook/useCategories";
-import { useMemuMutation } from "@/lib/hook/useMemuMutation";
+import { useCreateMemuMutation } from "@/lib/hook/useCreateMemuMutation";
 import { calculatePriceWithTax } from "@/lib/utils/function";
 import { addMenuFormschema, AddMenuFormValues } from "@/lib/zod/schema";
 
 export const AddMenuForm: FC = () => {
   const { categories } = useCategories();
-  const { trigger, isMutating } = useMemuMutation();
+  const { trigger, isMutating } = useCreateMemuMutation();
 
   const selectData = categories
     ? categories.map((category) => ({
@@ -41,25 +41,9 @@ export const AddMenuForm: FC = () => {
     validate: zodResolver(addMenuFormschema),
   });
 
-  const preview = useMemo(() => {
-    if (!form.values.image) return <></>;
-
-    const imageUrl = URL.createObjectURL(form.values.image);
-    return (
-      <Image
-        src={imageUrl}
-        width={120}
-        height={120}
-        fit="contain"
-        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-      />
-    );
-  }, [form.values.image]);
-
-  const handleSubmit = async (values: typeof form.values): Promise<void> => {
+  const handleSubmit = (values: typeof form.values): void => {
     trigger(values, {
       onSuccess: () => {
-        close();
         form.reset();
       },
       onError: (error) => {
@@ -125,7 +109,7 @@ export const AddMenuForm: FC = () => {
           {...form.getInputProps("image")}
         />
 
-        {preview}
+        <Preview image={form.values.image} />
 
         <Space h="1rem" />
 
@@ -141,3 +125,22 @@ export const AddMenuForm: FC = () => {
     </form>
   );
 };
+
+const Preview: FC<{ image: File | null }> = memo((props) => {
+  if (!props.image) {
+    return null;
+  }
+
+  const imageUrl = URL.createObjectURL(props.image);
+  return (
+    <Image
+      src={imageUrl}
+      width={120}
+      height={120}
+      fit="contain"
+      imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+    />
+  );
+});
+
+Preview.displayName = "Preview";

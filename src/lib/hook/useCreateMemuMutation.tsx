@@ -6,7 +6,7 @@ import { AddMenuFormValues } from "../zod/schema";
 
 type Arg = { arg: AddMenuFormValues };
 
-const createMenu = async (url: string, { arg }: Arg) => {
+const createMenuWithImageUpload = async (url: string, { arg }: Arg) => {
   const imagePath = arg.image ? await imageUpload(arg.image) : null;
 
   const { image, ...trimedBody } = arg;
@@ -27,12 +27,12 @@ const createMenu = async (url: string, { arg }: Arg) => {
   return await res.json();
 };
 
-export const useMemuMutation = () => {
+export const useCreateMemuMutation = () => {
   const router = useRouter();
   const { id } = router.query;
   const { trigger, isMutating } = useSWRMutation(
     `/api/${id}/menus`,
-    createMenu
+    createMenuWithImageUpload
   );
 
   return { trigger, isMutating };
