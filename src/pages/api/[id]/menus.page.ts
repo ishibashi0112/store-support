@@ -2,18 +2,13 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import {
+  deleteMenuRequestBodySchema,
   postMenuRequestBodySchema,
   putMenuRequestBodySchema,
 } from "@/lib/zod/schema";
 import { Menu } from "@/pages/store/[id]/menu/type/type";
 
-type Data =
-  | {
-      menus: Menu[];
-    }
-  | { menu: Menu };
-
-const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query, method, body } = req;
   const storeId = query.id as string;
 
@@ -61,17 +56,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       .eq("id", id)
       .select();
 
-    console.log(1);
-
     if (error) {
       throw error;
     }
 
     const menu = data[0] as Menu;
 
-    console.log(2);
-
     res.status(200).json({ menu });
+  } else if (method === "DELETE") {
+    const parsedBody = deleteMenuRequestBodySchema.parse(body);
+    const { id } = parsedBody;
+
+    const { error } = await supabase.from("menus").delete().eq("id", id);
+
+    if (error) {
+      throw error;
+    }
+
+    res.status(200).json({});
   } else {
     res.status(200).json({ menus: [] });
   }

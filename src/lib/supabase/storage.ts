@@ -18,8 +18,6 @@ export const updateImage = async (
   image: File,
   currentImagePath: string
 ): Promise<string> => {
-  console.log(currentImagePath);
-
   const { data, error } = await supabase.storage
     .from("menu-image")
     .upload(currentImagePath ? currentImagePath : `${randomId()}.png`, image, {
@@ -31,6 +29,16 @@ export const updateImage = async (
   }
 
   return data.path;
+};
+
+export const deleteImage = async (imagePath: string): Promise<void> => {
+  const { error } = await supabase.storage
+    .from("menu-image")
+    .remove([imagePath]);
+
+  if (error) {
+    throw error;
+  }
 };
 
 export const getImageUrl = (imagePath: string) => {

@@ -24,4 +24,6 @@ export const putMenuRequestBodySchema = addMenuFormSchema
   .omit({ image: true })
   .merge(z.object({ imagePath: z.string().nullable(), id: z.string() }));
 
+export const deleteMenuRequestBodySchema = z.object({ id: z.string() });
+
 export type AddMenuFormValues = z.infer<typeof addMenuFormSchema>;
