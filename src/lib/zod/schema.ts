@@ -13,7 +13,7 @@ export const addMenuFormSchema = z.object({
 
   description: z.string(),
   image: z.custom<File>().nullable(),
-  menuCategoryId: z.string().min(1, "必ず入力してください。"),
+  menuCategoryId: z.string().nullable(),
 });
 
 export const postMenuRequestBodySchema = addMenuFormSchema
@@ -25,5 +25,31 @@ export const putMenuRequestBodySchema = addMenuFormSchema
   .merge(z.object({ imagePath: z.string().nullable(), id: z.string() }));
 
 export const deleteMenuRequestBodySchema = z.object({ id: z.string() });
+
+export const categoryFormSchema = z.object({
+  name: z.string().min(1, "必ず入力してください。"),
+});
+
+const categoryInputSchema = z.array(
+  z.object({
+    name: z.string().min(1, "必ず入力してください。"),
+  })
+);
+
+export const addCategoryschema = z.object({
+  inputs: categoryInputSchema,
+});
+export const postCategoryRequestBodySchema = categoryInputSchema;
+
+export const putCategoryRequestBodySchema = categoryFormSchema.merge(
+  z.object({ id: z.string() })
+);
+export const deleteCategoryRequestBodySchema = z.object({
+  categoryId: z.string(),
+});
+
+export type AddCategoryFormValues = z.infer<typeof addCategoryschema>;
+
+export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 
 export type AddMenuFormValues = z.infer<typeof addMenuFormSchema>;

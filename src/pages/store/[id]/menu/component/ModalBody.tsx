@@ -6,8 +6,8 @@ import { useCategories } from "@/lib/hook/useCategories";
 
 import { MenuCategory } from "../type/type";
 import { AddCategoryView } from "./AddCategoryView";
+import { CategoryEditCard } from "./CategoryEditCard";
 import { DeleteCategoryView } from "./DeleteCategoryView";
-import { MenuCategoryEditCard } from "./MenuCategoryEditCard";
 
 export type DeleteStateType = {
   deleteView: boolean;
@@ -54,7 +54,7 @@ export const ModalBody: FC = () => {
     <div>
       <Stack spacing="xs">
         {categories.map((category) => (
-          <MenuCategoryEditCard
+          <CategoryEditCard
             key={category.id}
             category={category}
             setOverlayState={setEditOverlayState}

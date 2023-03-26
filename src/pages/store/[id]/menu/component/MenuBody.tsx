@@ -32,15 +32,7 @@ const tabsListData = [
 ];
 
 export const MenuBody: FC = () => {
-  const { menus, isLoading } = useMeuns();
-
-  // if (isLoading) {
-  //   return (
-  //     <Group position="center">
-  //       <Loader />
-  //     </Group>
-  //   );
-  // }
+  const { menus } = useMeuns();
 
   if (!menus) {
     return <Alert>データの取得に失敗しました。</Alert>;
@@ -66,6 +58,7 @@ export const MenuBody: FC = () => {
                 </Tabs.Tab>
               ))}
             </Tabs.List>
+
             <DisplaySelector />
           </Group>
 

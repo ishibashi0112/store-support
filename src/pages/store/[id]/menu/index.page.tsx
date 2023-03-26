@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const menus = await getMenusByStoreId(storeId);
   const categories = await getMenuCategoriesByStoreId(storeId);
   const menusKey = `/api/${storeId}/menus`;
-  const categoriesKey = `/${storeId}/categories`;
+  const categoriesKey = `/api/${storeId}/categories`;
 
   return {
     props: {

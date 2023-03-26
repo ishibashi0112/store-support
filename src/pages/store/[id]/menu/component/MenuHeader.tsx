@@ -2,7 +2,7 @@ import { Group, Text } from "@mantine/core";
 import React, { FC } from "react";
 
 import { AddMenuModalFormButton } from "./AddMenuModalFormButton";
-import { MenuCategoryModalFormButton } from "./MenuCategoryModalFormButton";
+import { CategoryModalFormButton } from "./CategoryModalFormButton";
 
 export const MenuHeader: FC = () => {
   return (
@@ -12,7 +12,7 @@ export const MenuHeader: FC = () => {
         <Group>
           <AddMenuModalFormButton />
 
-          <MenuCategoryModalFormButton />
+          <CategoryModalFormButton />
         </Group>
       </Group>
     </div>

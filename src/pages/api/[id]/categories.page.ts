@@ -1,11 +1,14 @@
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import {
+  deleteCategoryRequestBodySchema,
+  postCategoryRequestBodySchema,
+  putCategoryRequestBodySchema,
+} from "@/lib/zod/schema";
 import { MenuCategory } from "@/pages/store/[id]/menu/type/type";
 
-type Data = { categories: MenuCategory[] };
-
-const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query, method, body } = req;
   const storeId = query.id as string;
 
@@ -26,28 +29,67 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       throw error;
     }
 
-    console.log(categories);
+    res.status(200).json({ categories });
+  } else if (method === "POST") {
+    const parsedBody = postCategoryRequestBodySchema.parse(body);
+    const newBodyData = parsedBody.map((bodyData) => ({
+      ...bodyData,
+      storeId,
+    }));
+
+    const { data, error } = await supabase
+      .from("menu-categories")
+      .insert(newBodyData)
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    const categories = data as MenuCategory[];
 
     res.status(200).json({ categories });
-  }
-  // else if (method === "POST") {
-  //   const parsedBody = createMenuRequestBodySchema.parse(body);
-  //   const newBodyData = { ...parsedBody, storeId };
+  } else if (method === "PUT") {
+    const parsedBody = putCategoryRequestBodySchema.parse(body);
+    const { id, name } = parsedBody;
 
-  //   const { data, error } = await supabase
-  //     .from("menus")
-  //     .insert(newBodyData)
-  //     .select();
+    const { data, error } = await supabase
+      .from("menu-categories")
+      .update({ name })
+      .eq("id", id)
+      .select();
 
-  //   if (error) {
-  //     throw error;
-  //   }
+    if (error) {
+      throw error;
+    }
 
-  //   const menu = data[0] as Menu;
+    const category = data[0] as MenuCategory;
 
-  //   res.status(200).json({ menu });
-  // }
-  else {
+    res.status(200).json({ category });
+  } else if (method === "DELETE") {
+    const parsedBody = deleteCategoryRequestBodySchema.parse(body);
+    const { categoryId } = parsedBody;
+
+    const { error: menuUpdateError } = await supabase
+      .from("menus")
+      .update({ menuCategoryId: null })
+      .eq("menuCategoryId", categoryId);
+
+    if (menuUpdateError) {
+      throw menuUpdateError;
+    }
+
+    const { error: categoryDeleteError } = await supabase
+      .from("menu-categories")
+      .delete()
+      .eq("id", categoryId);
+
+    if (categoryDeleteError) {
+      throw categoryDeleteError;
+    }
+
+    res.status(200).json({});
+  } else {
     res.status(200).json({ categories: [] });
   }
 };

@@ -18,14 +18,12 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import React, { FC, useRef, useState } from "react";
-import { z } from "zod";
+
+import { useUpdateCategoryMutation } from "@/lib/hook/useUpdateCategoryMutation";
+import { categoryFormSchema, CategoryFormValues } from "@/lib/zod/schema";
 
 import { MenuCategory } from "../type/type";
 import { DeleteStateType, EditOverlayStateType } from "./ModalBody";
-
-const schema = z.object({
-  name: z.string().min(1, "必ず入力してください。"),
-});
 
 type Props = {
   category: MenuCategory;
@@ -33,16 +31,17 @@ type Props = {
   setOverlayState: React.Dispatch<React.SetStateAction<EditOverlayStateType>>;
 };
 
-export const MenuCategoryEditCard: FC<Props> = (props) => {
-  const [isLoading, setIsloading] = useState(false);
+export const CategoryEditCard: FC<Props> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
 
-  const form = useForm<z.infer<typeof schema>>({
+  const { trigger, isMutating } = useUpdateCategoryMutation();
+
+  const form = useForm<CategoryFormValues>({
     initialValues: {
       name: props.category.name,
     },
-    validate: zodResolver(schema),
+    validate: zodResolver(categoryFormSchema),
   });
 
   const handleDeleteSwitch = () => {
@@ -51,7 +50,7 @@ export const MenuCategoryEditCard: FC<Props> = (props) => {
 
   const editReset = () => {
     setEditMode(false);
-    form.reset();
+    form.setFieldValue("name", props.category.name);
   };
 
   const handleEditReset = (): void => {
@@ -65,7 +64,18 @@ export const MenuCategoryEditCard: FC<Props> = (props) => {
     ref.current?.focus();
   };
 
-  const handleEdit = (values: typeof form.values) => {};
+  const handleEditSubmit = (values: typeof form.values) => {
+    const data = { values, id: props.category.id };
+    trigger(data, {
+      onSuccess: () => {
+        props.setOverlayState({ visible: false, onClick: undefined });
+        setEditMode(false);
+      },
+      onError: (error: any) => {
+        console.log(error);
+      },
+    });
+  };
 
   const [opened, { toggle }] = useDisclosure(false);
   return (
@@ -78,7 +88,7 @@ export const MenuCategoryEditCard: FC<Props> = (props) => {
       shadow={editMode ? "sm" : ""}
       withBorder
     >
-      <form onSubmit={form.onSubmit(handleEdit)}>
+      <form onSubmit={form.onSubmit(handleEditSubmit)}>
         <Group position="apart">
           <TextInput
             className="flex-1"
@@ -94,8 +104,15 @@ export const MenuCategoryEditCard: FC<Props> = (props) => {
             {editMode ? (
               <>
                 {form.isDirty() ? (
-                  <Button type="submit" size="xs" compact>
-                    更新
+                  <Button
+                    className="min-w-[3.25rem]"
+                    type="submit"
+                    size="xs"
+                    compact
+                    loading={isMutating}
+                    loaderPosition="center"
+                  >
+                    {isMutating ? "" : "更新"}
                   </Button>
                 ) : null}
 

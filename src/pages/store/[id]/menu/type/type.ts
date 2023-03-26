@@ -9,7 +9,7 @@ export type Menu = {
   description: string;
   storeId: string;
   imagePath: string | null;
-  menuCategoryId: string;
+  menuCategoryId: string | null;
 };
 
 export type MenuCategory = {

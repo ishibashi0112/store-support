@@ -15,6 +15,12 @@ export const Menus: FC<Props> = (props) => {
   const { menus } = useMeuns();
   const { menuDisplay } = useSnapshot(state);
 
+  // const a = menus?.reduce((prev, current) => {
+  //   current.menuCategoryId
+  //   return [...prev]
+
+  // },[])
+
   const gridCols = menuDisplay === "list" ? 2 : 4;
   const filteredMenus = menus
     ? menus.filter((menu) => menu.menuCategoryId === props.categoryId)

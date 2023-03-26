@@ -3,13 +3,16 @@ import useSWRImmutable from "swr/immutable";
 
 import { MenuCategory } from "@/pages/store/[id]/menu/type/type";
 
-import { getMenuCategoriesByStoreId } from "../supabase/database";
-
 const fetcher = async (url: string): Promise<MenuCategory[]> => {
-  const storeId = url.split("/")[1];
-  const categories = await getMenuCategoriesByStoreId(storeId);
+  const res = await fetch(url);
 
-  return categories;
+  if (!res.ok) {
+    throw Error;
+  }
+
+  const json = (await res.json()) as { categories: MenuCategory[] };
+
+  return json.categories;
 };
 
 export const useCategories = () => {
@@ -21,7 +24,7 @@ export const useCategories = () => {
     isLoading,
     error: isError,
   } = useSWRImmutable<MenuCategory[], Error>(
-    id ? `/${id}/categoreis` : null,
+    id ? `/api/${id}/categories` : null,
     fetcher
   );
 

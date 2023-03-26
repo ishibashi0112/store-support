@@ -1,6 +1,8 @@
 import { Button, Group, Space, Text } from "@mantine/core";
 import React, { FC } from "react";
 
+import { useDeleteCategoryMutation } from "@/lib/hook/useDeleteCategoryMutation";
+
 import { DeleteStateType } from "./ModalBody";
 
 type Props = {
@@ -9,6 +11,27 @@ type Props = {
 };
 
 export const DeleteCategoryView: FC<Props> = (props) => {
+  const { trigger, isMutating } = useDeleteCategoryMutation();
+
+  const handleDelete = () => {
+    if (!props.deleteState.category) return;
+
+    const categoryId = props.deleteState.category.id;
+    trigger(
+      { categoryId },
+      {
+        onSuccess: () => {
+          props.setDeleteState({
+            deleteView: false,
+            category: null,
+          });
+        },
+        onError: (error: any) => {
+          console.log(error);
+        },
+      }
+    );
+  };
   return (
     <div>
       <Text fz="sm">
@@ -19,7 +42,9 @@ export const DeleteCategoryView: FC<Props> = (props) => {
         >{`カテゴリー: ${props.deleteState.category?.name}`}</Text>{" "}
         を削除しますか？
         <br />
-        属しているメニューは、ノーカテゴリーになります。
+        <Text fz="xs" span color="dimmed">
+          ※このカテゴリーのメニューは、ノーカテゴリーになります。
+        </Text>
       </Text>
       <Space h="2rem" />
 
@@ -27,13 +52,21 @@ export const DeleteCategoryView: FC<Props> = (props) => {
         <Button
           variant="default"
           size="xs"
+          disabled={isMutating}
           onClick={() =>
             props.setDeleteState((prev) => ({ ...prev, deleteView: false }))
           }
         >
           戻る
         </Button>
-        <Button size="xs" color="red">
+        <Button
+          className="min-w-[3.25rem]"
+          size="xs"
+          color="red"
+          loading={isMutating}
+          loaderPosition="center"
+          onClick={handleDelete}
+        >
           削除
         </Button>
       </Group>

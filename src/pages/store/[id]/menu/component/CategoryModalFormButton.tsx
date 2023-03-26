@@ -4,7 +4,7 @@ import React, { FC } from "react";
 
 import { ModalBody } from "./ModalBody";
 
-export const MenuCategoryModalFormButton: FC = () => {
+export const CategoryModalFormButton: FC = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (

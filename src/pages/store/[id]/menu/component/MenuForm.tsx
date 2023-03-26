@@ -35,7 +35,7 @@ export const MenuForm: FC<Props> = (props) => {
       price: props.menu ? props.menu.price : 0,
       description: props.menu ? props.menu.description : "",
       image: null,
-      menuCategoryId: props.menu ? props.menu.menuCategoryId : "",
+      menuCategoryId: props.menu ? props.menu.menuCategoryId : null,
     },
     validate: zodResolver(addMenuFormSchema),
   });
