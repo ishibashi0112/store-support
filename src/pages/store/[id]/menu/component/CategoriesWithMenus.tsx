@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { useCategories } from "@/lib/hook/useCategories";
 
 import { Menus } from "./Menus";
-import { NoCategoryMenus } from "./noCategoryMenus";
+import { NoCategoryMenus } from "./NoCategoryMenus";
 
 export const CategoriesWithMenus: FC = () => {
   const { categories } = useCategories();
