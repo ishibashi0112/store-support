@@ -4,6 +4,7 @@ import React, { FC } from "react";
 import { useCategories } from "@/lib/hook/useCategories";
 
 import { Menus } from "./Menus";
+import { NoCategoryMenus } from "./noCategoryMenus";
 
 export const CategoriesWithMenus: FC = () => {
   const { categories } = useCategories();
@@ -14,9 +15,13 @@ export const CategoriesWithMenus: FC = () => {
 
   return (
     <>
+      <NoCategoryMenus />
+
       {categories.map((category) => (
         <div key={category.id}>
-          <Text fw="bold">{category.name}</Text>
+          <Text fz="sm" fw="bold">
+            {category.name}
+          </Text>
           <Divider variant="dashed" mb="sm" />
 
           <Menus categoryId={category.id} />

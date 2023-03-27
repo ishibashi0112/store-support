@@ -1,4 +1,4 @@
-import { Badge, Card, Group, Text } from "@mantine/core";
+import { Card, Group, Text } from "@mantine/core";
 import React, { FC } from "react";
 
 import { calculatePriceWithTax } from "@/lib/utils/function";
@@ -26,11 +26,11 @@ export const ListMenu: FC<Props> = (props) => {
           <OperationMenu {...props} />
         </Group>
       </Group>
-      <Group spacing="xs" position="apart">
-        <div>
+      <Group spacing="xs" position="right">
+        {/* <div>
           <Badge>期間限定</Badge>
           <Badge>おすすめ</Badge>
-        </div>
+        </div> */}
 
         <Text size="sm">{`¥ ${calculatePriceWithTax(
           props.menu.price
