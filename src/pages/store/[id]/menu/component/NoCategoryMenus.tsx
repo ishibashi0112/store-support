@@ -1,4 +1,4 @@
-import { Divider, SimpleGrid, Space, Text } from "@mantine/core";
+import { SimpleGrid, Space, Text } from "@mantine/core";
 import React, { FC } from "react";
 import { useSnapshot } from "valtio";
 
@@ -24,7 +24,8 @@ export const NoCategoryMenus: FC = () => {
       <Text fz="sm" fw="bold">
         No Category
       </Text>
-      <Divider variant="dashed" mb="sm" />
+
+      <Space h="0.5rem" />
 
       <SimpleGrid cols={menuDisplay === "list" ? 2 : 4}>
         {noCategoryMenus.map((menu) => (

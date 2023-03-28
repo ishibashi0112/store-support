@@ -1,4 +1,4 @@
-import { Divider, Space, Text } from "@mantine/core";
+import { Space, Text } from "@mantine/core";
 import React, { FC } from "react";
 
 import { useCategories } from "@/lib/hook/useCategories";
@@ -22,7 +22,8 @@ export const CategoriesWithMenus: FC = () => {
           <Text fz="sm" fw="bold">
             {category.name}
           </Text>
-          <Divider variant="dashed" mb="sm" />
+
+          <Space h="0.5rem" />
 
           <Menus categoryId={category.id} />
 
