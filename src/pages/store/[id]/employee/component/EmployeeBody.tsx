@@ -1,6 +1,7 @@
 import {
   Avatar,
   Badge,
+  Container,
   Group,
   Select,
   Space,
@@ -33,7 +34,7 @@ export const EmployeeBody: FC = () => {
   }
 
   return (
-    <div>
+    <Container>
       <EmployeeHeader />
 
       <Space h="1rem" />
@@ -76,6 +77,6 @@ export const EmployeeBody: FC = () => {
           ))}
         </tbody>
       </Table>
-    </div>
+    </Container>
   );
 };

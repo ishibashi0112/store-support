@@ -48,6 +48,10 @@ export const deleteCategoryRequestBodySchema = z.object({
   categoryId: z.string(),
 });
 
+export const sendMailFormSchema = z.object({
+  email: z.string().email("emailの形式で入力してください。"),
+});
+
 export type AddCategoryFormValues = z.infer<typeof addCategoryschema>;
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
