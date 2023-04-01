@@ -46,8 +46,10 @@ const SignIn: NextPage = () => {
       setIsLoading(true);
 
       const { user } = await signIn(values.email, values.password);
+      console.log(user.id);
 
       const storeId = await getStoreIdByCurrentUser(user.id);
+      console.log(storeId);
 
       await push(`/store/${storeId}/management`);
     } catch (error: any) {

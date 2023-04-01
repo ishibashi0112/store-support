@@ -2,20 +2,23 @@ import { Button, Stack, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import React, { FC } from "react";
 
-import { sendMailFormSchema } from "@/lib/zod/schema";
+import { useSendInviteEmailMutation } from "../lib/hook/useSendInviteEmailMutation";
+import { sendInviteMailFormSchema } from "../lib/zod/employeeSchema";
 
 export const SendMailForm: FC = () => {
+  const { trigger, isMutating } = useSendInviteEmailMutation();
   const form = useForm({
     initialValues: {
       email: "",
     },
-    validate: zodResolver(sendMailFormSchema),
+    validate: zodResolver(sendInviteMailFormSchema),
   });
 
   const handleSubmit = (values: typeof form.values) => {
     const result = confirm("招待メールを送信してもよろしいですか？");
     if (!result) return;
-    console.log(values);
+
+    trigger(values);
   };
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -25,7 +28,9 @@ export const SendMailForm: FC = () => {
           placeholder="email address"
           {...form.getInputProps("email")}
         />
-        <Button type="submit">送信</Button>
+        <Button type="submit" loading={isMutating}>
+          送信
+        </Button>
       </Stack>
     </form>
   );
